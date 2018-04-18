@@ -1,44 +1,38 @@
-# What is Docker 3Proxy
+# Docker 3Proxy
 Docker 3Proxy is a container with socks5 proxy server based on [3proxy](http://www.3proxy.ru/).
 
-[![](https://images.microbadger.com/badges/version/riftbit/3proxy.svg)](https://microbadger.com/images/riftbit/3proxy) [![](https://images.microbadger.com/badges/image/riftbit/3proxy.svg)](https://microbadger.com/images/riftbit/3proxy) [![Docker Pulls](https://img.shields.io/docker/pulls/riftbit/3proxy.svg)](https://hub.docker.com/r/riftbit/3proxy/) [![Docker Stars](https://img.shields.io/docker/stars/riftbit/3proxy.svg)](https://hub.docker.com/r/riftbit/3proxy/) [![GitHub last commit](https://img.shields.io/github/last-commit/riftbit/docker-3proxy.svg)](https://github.com/riftbit/docker-3proxy) [![Docker Build Status](https://img.shields.io/docker/build/riftbit/3proxy.svg)](https://hub.docker.com/r/riftbit/3proxy/)
-  
-Link on docker hub: [riftbit/3proxy](https://hub.docker.com/r/riftbit/3proxy/)
-
-Link on github: [riftbit/docker-3proxy](https://github.com/riftbit/docker-3proxy)
-
-### Build Args
-
- - PROXY_VERSION=0.8.11
- 
- 
-### Environment variables:
- 
+## Environment variables:
  - PROXY_LOGIN - login for proxy user (:exclamation:required!)
  - PROXY_PASSWORD - password for proxy user (:exclamation:required!)
+ - NS1 - nameserver (1st), default 1.1.1.1
+ - NS2 - nameserver (2nd), default 8.8.8.8
+ - NSCACHE - DNS Cache, default 65536
+ - MAXCONN - max connections limit (maxconn), default 100
+ - ALLOWED_IPS - space delimited ips list, like ALLOWED_IPS="10.0.0.1 10.0.0.2"
+ - SOCKS_PORT - Socks server listen port, default 3128
+ - HTTP_PORT - HTTP server listen port, default 8000
 
-### Exposed Ports
+## Usage
 
- - **3128:3128/tcp**
-
-### Volumes
- - /etc/3proxy/log
-
-### Container Changelog (dd.mm.yy)
-
-- **12.01.18** - readme cleanups. fixes and updates
-
-### Example usage
-
+### Access by ip
 ```
-docker run --name 3proxy -d -p 3128:3128 --env PROXY_LOGIN=pr0xyUser --env PROXY_PASSWORD=passw0rd riftbit/3proxy
+docker run -d --name 3proxy-ip \
+           -e "ALLOWED_IPS=10.0.0.1 10.0.0.2" \
+           -e "HTTP_PORT=8000" \
+           -e "SOCKS_PORT=5000" \
+           -p 8000:8000 \
+           -p 5000:5000 \
+            kefirgames/3proxy:latest
+```
+### Access by user/passwd
+```
+docker run -d --name 3proxy-pass \
+           -e "PROXY_LOGIN=socks5" \
+           -e "PROXY_PASSWORD=SomeSockingPasswd"
+           -e "HTTP_PORT=8001" \
+           -e "SOCKS_PORT=5001" \
+           -p 8001:8001 \
+           -p 5001:5001 \
+            kefirgames/3proxy:latest
 ```
 
-After container starts you will see params for connection setup:
-
-```
-Proxy user login:         pr0xyUser
-Proxy user password:      passw0rd
-Proxy process pid:        6
-Proxy process started!
-```

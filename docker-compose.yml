@@ -1,10 +1,32 @@
-version: '2'
+version: '3'
+
+networks:
+    proxy:
 
 services:
-  serviio:
-    restart: always
-    image: riftbit/3proxy:stable
+  ip:
+    image: kefirgames/3proxy
     ports:
-     - "3128:3128/tcp"
-    volumes:
-     - /srv/docker/3proxy:/etc/3proxy/
+     - "5000:5000"
+     - "8000:8000"
+    networks:
+     - proxy
+    environment:
+     - "HTTP_PORT=8000"
+     - "SOCKS_PORT=5000"
+     - "ALLOWED_IPS=10.0.0.1 10.0.0.2"
+    restart: always
+
+  pass:
+    image: kefirgames/3proxy
+    ports:
+     - "5001:5001"
+     - "8001:8001"
+    networks:
+     - proxy
+    environment:
+     - "HTTP_PORT=8001"
+     - "SOCKS_PORT=5001"
+     - "PROXY_LOGIN=socks5"
+     - "PROXY_PASSWORD=SomeSockingPasswd"
+    restart: always
